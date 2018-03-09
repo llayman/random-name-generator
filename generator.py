@@ -6,6 +6,7 @@ last_names = pd.read_fwf('census-dist-all-last.txt.gz', compression='gzip', usec
 first_names = pd.read_csv('census-dist-female-first.csv.gz', compression='gzip', header=None)
 first_names = first_names.append(pd.read_csv('census-dist-male-first.csv.gz', compression='gzip', header=None))
 
+
 # Returns a pandas dataframe containing randomly generated first and last names from US census data
 # n: number of samples to generate
 # replacement: sampling with (True) or without (False) replacement
