@@ -27,7 +27,14 @@ def generate_names(n, replacement=True):
     return df
 
 
-def generate_phone_numbers(n):
+def _get_random_phone():
+    area = chr(random.randint(50, 57)) + chr(random.randint(48, 57)) + chr(random.randint(48, 57))
+    ex = chr(random.randint(50, 57)) + chr(random.randint(48, 57)) + chr(random.randint(48, 57))
+    line = chr(random.randint(48, 57)) + chr(random.randint(48, 57)) + chr(random.randint(48, 57)) + chr(
+        random.randint(48, 57))
+    return area + '-' + ex + '-' + line
+
+def generate_phone_numbers(n, with_replacement=True):
     """
     Returns a list of randomly-generated US phone numbers
     :param n: number of samples to generate
@@ -35,11 +42,10 @@ def generate_phone_numbers(n):
     """
     numbers = []
     for i in range(n):
-        area = chr(random.randint(50, 57)) + chr(random.randint(48, 57)) + chr(random.randint(48, 57))
-        ex = chr(random.randint(50, 57)) + chr(random.randint(48, 57)) + chr(random.randint(48, 57))
-        line = chr(random.randint(48, 57)) + chr(random.randint(48, 57)) + chr(random.randint(48, 57)) + chr(
-            random.randint(48, 57))
-        numbers.append(area + '-' + ex + '-' + line)
+        num = _get_random_phone()
+        while not with_replacement and num in numbers:
+            num = _get_random_phone()
+        numbers.append(num)
     return numbers
 
 
@@ -59,7 +65,7 @@ if __name__ == '__main__':
               "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
 
     chunk_size = 1000000
-    n = remaining = 50000
+    n = remaining = 1000000
     print_header = True
     mode = 'w+'
     if not os.path.isdir('output'):
@@ -67,7 +73,7 @@ if __name__ == '__main__':
     filename = os.path.join('output', 'randoms_' + str(n) + '.csv')
     while remaining > 0:
         names = generate_names(min(n, chunk_size))
-        phones = pd.Series(generate_phone_numbers(min(n, chunk_size)))
+        phones = pd.Series(generate_phone_numbers(min(n, chunk_size), with_replacement=False))
         ages = pd.Series(random.choices(range(18, 100 + 1), k=min(n, chunk_size)))
         states = pd.Series(random.choices(states, k=min(n, chunk_size)))
         license_plates = pd.Series(generate_license_plates(min(n, chunk_size)))
